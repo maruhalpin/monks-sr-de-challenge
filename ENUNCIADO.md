@@ -1,44 +1,44 @@
-# Desafío Senior Data Engineer — XYZ × .Monks
+# Senior Data Engineer Challenge — XYZ × .Monks
 
-## Contexto
+## Context
 
-La empresa XYZ se dedica a la venta minorista de artículos de moda. Para impulsar su negocio, realizan campañas de marketing digital, principalmente en Meta y Google Ads.
+XYZ is a fashion retail company. To grow the business, they run digital marketing campaigns, mainly on Meta and Google Ads.
 
-Con el objetivo de comprender el comportamiento de los usuarios en su sitio web, analizar las páginas más visitadas y evaluar la efectividad del funnel de compra, implementaron Google Analytics 4 (GA4).
+To understand user behavior on their website, analyze the most visited pages, and evaluate the purchase funnel, they implemented Google Analytics 4 (GA4).
 
-Durante este año, XYZ decidió formalizar una alianza estratégica con .Monks, tras desvincularse de su agencia anterior por no alcanzar los resultados esperados.
+This year, XYZ formalized a strategic partnership with .Monks after parting ways with their previous agency for not delivering the expected results.
 
-El Director de Marketing y Analytics de XYZ es el principal stakeholder de este proyecto.
+XYZ’s Director of Marketing and Analytics is the main stakeholder for this project.
 
-## Ecosistema actual
+## Current ecosystem
 
-En la reunión inicial se presentó un esquema **híbrido**:
-
-
-| Fuente     | Tabla                    | Cadencia                                        | Grano                   |
-| ---------- | ------------------------ | ----------------------------------------------- | ----------------------- |
-| GA4        | `google_analytics_table` | Streaming continuo (exportación GA4 → BigQuery) | Evento                  |
-| Google Ads | `google_ads_table`       | Batch cada 6 horas (4 cargas por día)           | Campaña × ventana de 6h |
-| Meta Ads   | `meta_ads_table`         | Batch cada 6 horas (4 cargas por día)           | Campaña × ventana de 6h |
+The kickoff meeting described a **hybrid** setup:
 
 
-Las ventanas de media son `00:00–06:00`, `06:00–12:00`, `12:00–18:00` y `18:00–24:00`. Cada campaña genera **4 registros por día** (uno por batch).
+| Source     | Table                    | Cadence                                      | Grain                |
+| ---------- | ------------------------ | -------------------------------------------- | -------------------- |
+| GA4        | `google_analytics_table` | Continuous streaming (GA4 export → BigQuery) | Event                |
+| Google Ads | `google_ads_table`       | Batch every 6 hours (4 loads per day)        | Campaign × 6h window |
+| Meta Ads   | `meta_ads_table`         | Batch every 6 hours (4 loads per day)        | Campaign × 6h window |
+
+
+Media windows are `00:00–06:00`, `06:00–12:00`, `12:00–18:00`, and `18:00–24:00`. Each campaign produces **4 records per day** (one per batch).
 
 ### Google Ads
 
 
-| Columna         | Descripción                                |
-| --------------- | ------------------------------------------ |
-| `date`          | Fecha del reporte                          |
-| `campaign_name` | Nombre de la campaña                       |
-| `campaign_id`   | Identificador de campaña (prefijo `GADS_`) |
-| `placement_id`  | Placement del anuncio                      |
-| `account_id`    | Cuenta de anuncios                         |
-| `account_name`  | Nombre de la cuenta                        |
-| `country`       | País                                       |
-| `clicks`        | Clics en la ventana                        |
-| `impressions`   | Impresiones en la ventana                  |
-| `spend`         | Inversión en la ventana                    |
+| Column          | Description                          |
+| --------------- | ------------------------------------ |
+| `date`          | Report date                          |
+| `campaign_name` | Campaign name                        |
+| `campaign_id`   | Campaign identifier (prefix `GADS_`) |
+| `placement_id`  | Ad placement                         |
+| `account_id`    | Ads account                          |
+| `account_name`  | Account name                         |
+| `country`       | Country                              |
+| `clicks`        | Clicks in the window                 |
+| `impressions`   | Impressions in the window            |
+| `spend`         | Spend in the window                  |
 
 
 
@@ -46,18 +46,18 @@ Las ventanas de media son `00:00–06:00`, `06:00–12:00`, `12:00–18:00` y `1
 ### Meta Ads
 
 
-| Columna         | Descripción                                        |
-| --------------- | -------------------------------------------------- |
-| `date`          | Fecha del reporte                                  |
-| `campaign_name` | Nombre de la campaña                               |
-| `campaign_id`   | Identificador de campaña (prefijo `META_`)         |
-| `ad_location`   | Ubicación del anuncio (Feed, Stories, Reels, etc.) |
-| `account_id`    | Cuenta de anuncios                                 |
-| `account_name`  | Nombre de la cuenta                                |
-| `country`       | País                                               |
-| `clicks`        | Clics en la ventana                                |
-| `impressions`   | Impresiones en la ventana                          |
-| `spend`         | Inversión en la ventana                            |
+| Column          | Description                              |
+| --------------- | ---------------------------------------- |
+| `date`          | Report date                              |
+| `campaign_name` | Campaign name                            |
+| `campaign_id`   | Campaign identifier (prefix `META_`)     |
+| `ad_location`   | Ad location (Feed, Stories, Reels, etc.) |
+| `account_id`    | Ads account                              |
+| `account_name`  | Account name                             |
+| `country`       | Country                                  |
+| `clicks`        | Clicks in the window                     |
+| `impressions`   | Impressions in the window                |
+| `spend`         | Spend in the window                      |
 
 
 
@@ -65,64 +65,65 @@ Las ventanas de media son `00:00–06:00`, `06:00–12:00`, `12:00–18:00` y `1
 ### Google Analytics 4
 
 
-| Columna           | Descripción                                       |
-| ----------------- | ------------------------------------------------- |
-| `user_id`         | Usuario                                           |
-| `session_id`      | Sesión (único junto con `user_id`)                |
-| `event_timestamp` | Timestamp del evento (epoch ms)                   |
-| `event_name`      | Nombre del evento (`page_view`, `purchase`, etc.) |
-| `event_params`    | Parámetros del evento (JSON)                      |
-| `campaign_id`     | Campaña de atribución cuando está presente        |
-| `stream_name`     | Stream de GA4                                     |
-| `page_url`        | URL de la página                                  |
-| `country`         | País                                              |
-| `is_conversion`   | Flag de conversión                                |
+| Column            | Description                                |
+| ----------------- | ------------------------------------------ |
+| `user_id`         | User                                       |
+| `session_id`      | Session (unique together with `user_id`)   |
+| `event_timestamp` | Event timestamp (epoch ms)                 |
+| `event_name`      | Event name (`page_view`, `purchase`, etc.) |
+| `event_params`    | Event parameters (JSON)                    |
+| `campaign_id`     | Attribution campaign when present          |
+| `stream_name`     | GA4 stream                                 |
+| `page_url`        | Page URL                                   |
+| `country`         | Country                                    |
+| `is_conversion`   | Conversion flag                            |
 
 
 
 
-## Preguntas de negocio
+## Business questions
 
-Al finalizar la sesión, el Director plantea las siguientes interrogantes. El equipo de datos debe poder responderlas de forma escalable:
+At the end of the session, the Director raised the following questions. The data team must be able to answer them in a scalable way:
 
-1. **Rendimiento e inversión multicanal.** ¿Qué plataforma publicitaria ofrece la mejor eficiencia financiera y rendimiento integral considerando las métricas clave del funnel (ROI, CPC, CPA, etc.)?
-2. **Atribución y efectividad de campañas.** ¿Qué campañas específicas están impulsando el mayor volumen de conversiones y generación de ingresos?
-3. **Análisis de canales de adquisición.** ¿Qué canales de tráfico muestran el mejor desempeño global al integrar el comportamiento del usuario en el sitio con las inversiones publicitarias?
-4. **Diseño de modelo de datos y arquitectura.** ¿Qué modelo de datos y tablas intermedias/finales se deben diseñar para alimentar los reportes? ¿Cómo traducir estas necesidades de negocio a especificaciones técnicas claras para el equipo de data engineering?
+1. **Multichannel performance and investment.** Which advertising platform offers the best financial efficiency and overall performance across key funnel metrics (ROI, CPC, CPA, etc.)?
+2. **Campaign attribution and effectiveness.** Which specific campaigns are driving the highest volume of conversions and revenue?
+3. **Acquisition channel analysis.** Which traffic channels perform best overall when on-site user behavior is combined with advertising spend?
+4. **Data model and architecture design.** Which data model and intermediate/final tables should be designed to power the reports? How should these business needs be translated into clear technical specs for the data engineering team?
 
-El líder técnico de .Monks te pide un plan de acción para el equipo interno: necesidades del cliente, transformaciones requeridas y cómo modelar la solución.
+The .Monks technical lead is asking you for an action plan for the internal team: client needs, required transformations, and how to model the solution.
 
 ---
 
-El desafío tiene **dos entregables independientes**. No se evalúa BigQuery en el desarrollo practico, ni Postgres en el diseño teórico.
+The challenge has **two independent deliverables**. BigQuery is not evaluated in the hands-on work, and Postgres is not evaluated in the theoretical design.
 
-## Entregable A — Diseño teórico (GCP)
+## Deliverable A  - Theoretical design (GCP)
 
-Arquitectura. Entregar un documento (y un diagrama) que describa cómo resolverías este problema **en Google Cloud**, como si el destino real fuera BigQuery.
+Architecture. Deliver a document (and a diagram) describing how you would solve this problem **on Google Cloud**, where the GA4 streaming data will land in **BigQuery**, and the media data (Meta and Google Ads) will land in **Google Cloud Storage**.
 
-Debes cubrir:
+You must cover:
 
-- Flujo de datos (GA4 streaming vs. Ads batch 6h), herramientas y manejo de errores
-- Particionado, clustering, costos de slots y estrategia de cadencia en BigQuery (como se actualiza la data)
-- Acoplamiento streaming–batch: late-arriving data, watermarks, reprocesamiento y JOINs temporales
-- Cómo las tablas finales son consumidas para responder las consultas.
+- Data flow (GA4 streaming vs. Ads 6h batch), tools, and error handling.
+- Streaming–batch coupling: late-arriving data, watermarks, reprocessing.
+- Architecture to understand how to move data from one place to another.
+- How the final tables are consumed to answer the questions.
 
-No se implementa nada en GCP en este ejercicio, solo teoria.
+Nothing is implemented on GCP in this exercise.
 
-## Entregable B — Implementación (dbt + Postgres)
+## Deliverable B - Implementation (dbt + Postgres)
 
-Implementar el modelo de datos con **dbt** sobre **Postgres**. El lab emula el esquema híbrido:
+Implement the data model with **dbt** on **Postgres**. The lab emulates the hybrid setup:
 
-- Al levantar el entorno hay **datos históricos** ya cargados (mayo 2026).
-- Durante ~10 minutos siguen llegando eventos GA4 (streaming) y batches de Google Ads y Meta (equivalente comprimido a una carga cada 6 horas).
-- Las tablas de Media seran de **4 registros por campaña por día**. La sumatoria de los 4 registros sera el total del dia.
+- When the environment starts, **historical data** is already loaded (May 2026).
+- For ~10 minutes, GA4 events keep arriving (streaming) along with Google Ads and Meta batches (a compressed equivalent of a load every 6 hours).
+- Media tables have **4 records per campaign per day**. The sum of those 4 records is the daily total.
 
-Consumir únicamente las tablas `raw` de Postgres (no los CSV de origen). Y se debe:
+Consume only the `raw` tables in Postgres (not the source CSVs). You must:
 
-- Modelar siguiendo las buenas practicas de dbt.
-- Resolver la integración streaming–batch de forma incremental (watermarks, ventanas incompletas, deduplicación)
-- Unir evento/sesión (GA4) con campaña × ventana de 6h (Ads)
-- Responder con precisión las preguntas de ROI, CPC, CPA, conversiones, atribución e ingresos
-- Inclucion de tests
+- Model following dbt best practices
+- Solve the streaming–batch integration incrementally (watermarks, incomplete windows, deduplication)
+- Join event/session (GA4) with campaign × 6h window (Ads)
+- Answer ROI, CPC, CPA, conversions, attribution, and revenue accurately
+- Include tests
+- Return partial while the system is on *(for example, run dbt every x amount of seconds, emulating a cron job)*
 
-Las instrucciones para levantar el lab se documentarán en el `README`.
+Lab setup instructions are in the `README`.

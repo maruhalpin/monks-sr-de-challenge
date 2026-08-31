@@ -1,27 +1,27 @@
-# Desafío Senior Data Engineer — XYZ × .Monks
+# Senior Data Engineer Challenge — XYZ × .Monks
 
-El enunciado del negocio y los entregables esperados estan en `[ENUNCIADO.md](ENUNCIADO.md)`.
+The business brief and expected deliverables are in [ENUNCIADO.md](ENUNCIADO.md).
 
-Este README solo cubre cómo levantar el lab local (Postgres + emulador).
+This README only covers how to start the local lab (Postgres + emulator).
 
-## Requisitos
+## Requirements
 
 - Docker Desktop
 - Python 3.10+
-- `make` (opcional; los mismos comandos están más abajo)
+- `make` (optional; the same commands are listed below)
 
 ## Lab
 
-El emulador carga **mayo 2026** al arrancar y, durante ~10 minutos, reproduce **junio 2026**: eventos GA4 en streaming y data de media en batches de 6 horas (4 registros por campaña por día).
+On startup, the emulator loads **May 2026**. For ~10 minutes it then replays **June 2026**: GA4 events as a stream and media data in 6-hour batches (4 records per campaign per day).
 
 ```bash
 make up          # docker compose up --build -d
-make logs        # seguir el emulador
+make logs        # follow the emulator
 ```
 
-Esperá el log `historical backfill complete`. A partir de ahí mayo ya es consultable. El stream de junio termina con `live stream complete`.
+Wait for the `historical backfill complete` log. From that point, May is queryable. The June stream ends with `live stream complete`.
 
-Conexión:
+Connection:
 
 ```text
 host: localhost
@@ -31,31 +31,30 @@ user: xyz
 password: xyz
 ```
 
-Tablas de origen (únicas que debe consumir dbt):
+Source tables (the only ones dbt should consume):
 
 
-| Tabla                         | Qué es      |
+| Table                         | What it is  |
 | ----------------------------- | ----------- |
-| `raw.google_analytics_events` | Eventos GA4 |
+| `raw.google_analytics_events` | GA4 events  |
 | `raw.google_ads`              | Google Ads  |
 | `raw.meta_ads`                | Meta Ads    |
 
 
-Para bajar el entorno y borrar el volumen:
+To stop the environment and delete the volume:
 
 ```bash
 make down
 ```
 
-No leas los CSV de `.data`. El contrato es Postgres.
+Do not read the CSVs in `.data`. The contract is Postgres.
 
-## Entregable B — dbt
+## Deliverable B — dbt
 
-Inicializá tu propio proyecto dbt en `dbt/` y conectalo al Postgres del laboratorio. La arquitectura de modelos, tests y docs es parte de lo que se evalúa.
+Initialize your own dbt project in `dbt/` and point it at the lab Postgres. Model architecture, tests, and docs are part of the evaluation.
 
-## Entrega
+## Submission
 
-1. Documento de arquitectura GCP (entregable A)
-2. Proyecto dbt que compile y corra utilizando el lab(entregable B)
-3. Respuestas a las preguntas de negocio utilizando la data que se simula.
-
+1. GCP architecture document (deliverable A)
+2. A dbt project that compiles and runs against the lab (deliverable B)
+3. Answers to the business questions using the simulated data
