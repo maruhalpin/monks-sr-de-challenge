@@ -5,13 +5,14 @@ this wall-clock window. Ads still land as 4 batches per campaign-day (6h);
 their wall interval is derived from the duration, not set independently.
 """
 
+import os
 from datetime import date, datetime, timezone
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO_ROOT / ".data"
 
-TARGET_DURATION_SECONDS = 600
+TARGET_DURATION_SECONDS = int(os.environ.get("TARGET_DURATION_SECONDS", "600"))
 TICK_SECONDS = 1
 
 HISTORICAL_CUTOFF_DATE = date(2026, 5, 31)

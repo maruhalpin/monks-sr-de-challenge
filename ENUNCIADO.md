@@ -117,7 +117,7 @@ Implementar el modelo de datos con **dbt** sobre **Postgres**. El lab emula el e
 - Durante ~10 minutos siguen llegando eventos GA4 (streaming) y batches de Google Ads y Meta (equivalente comprimido a una carga cada 6 horas).
 - Las tablas de Media seran de **4 registros por campaña por día**. La sumatoria de los 4 registros sera el total del dia.
 
-El candidato consume únicamente las tablas `raw` de Postgres (no los CSV de origen). Debe:
+Consumir únicamente las tablas `raw` de Postgres (no los CSV de origen). Y se debe:
 
 - Modelar siguiendo las buenas practicas de dbt.
 - Resolver la integración streaming–batch de forma incremental (watermarks, ventanas incompletas, deduplicación)
@@ -125,4 +125,4 @@ El candidato consume únicamente las tablas `raw` de Postgres (no los CSV de ori
 - Responder con precisión las preguntas de ROI, CPC, CPA, conversiones, atribución e ingresos
 - Inclucion de tests
 
-Las instrucciones para levantar el laboratorio se documentarán en el `README`.
+Las instrucciones para levantar el lab se documentarán en el `README`.

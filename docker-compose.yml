@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: xyz
+      POSTGRES_PASSWORD: xyz
+      POSTGRES_DB: xyz
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./emulator/sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xyz -d xyz"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+  emulator:
+    build:
+      context: .
+      dockerfile: emulator/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: xyz
+      POSTGRES_USER: xyz
+      POSTGRES_PASSWORD: xyz
+      TARGET_DURATION_SECONDS: ${TARGET_DURATION_SECONDS:-600}
+
+volumes:
+  pgdata:
