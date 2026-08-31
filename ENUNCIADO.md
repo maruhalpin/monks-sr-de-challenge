@@ -102,12 +102,12 @@ Architecture. Deliver a document (and a diagram) describing how you would solve 
 
 You must cover:
 
-- Data flow (GA4 streaming vs. Ads 6h batch), tools, and error handling.
+- Data manipulation (GA4 streaming vs. Ads 6h batch), tools, and error handling.
 - Streaming–batch coupling: late-arriving data, watermarks, reprocessing.
 - Architecture to understand how to move data from one place to another.
 - How the final tables are consumed to answer the questions.
 
-Nothing is implemented on GCP in this exercise.
+Nothing needs to be implemented in GCP for this exercise, only design.
 
 ## Deliverable B - Implementation (dbt + Postgres)
 
@@ -124,6 +124,6 @@ Consume only the `raw` tables in Postgres (not the source CSVs). You must:
 - Join event/session (GA4) with campaign × 6h window (Ads)
 - Answer ROI, CPC, CPA, conversions, attribution, and revenue accurately
 - Include tests
-- Return partial while the system is on *(for example, run dbt every x amount of seconds, emulating a cron job)*
+- Return partial results while the system is on *(for example, run dbt every x amount of seconds, emulating a cron job)*
 
 Lab setup instructions are in the `README`.
