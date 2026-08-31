@@ -34,11 +34,11 @@ password: xyz
 Source tables (the only ones dbt should consume):
 
 
-| Table                         | What it is  |
-| ----------------------------- | ----------- |
-| `raw.google_analytics_events` | GA4 events  |
-| `raw.google_ads`              | Google Ads  |
-| `raw.meta_ads`                | Meta Ads    |
+| Table                         | What it is |
+| ----------------------------- | ---------- |
+| `raw.google_analytics_events` | GA4 events |
+| `raw.google_ads`              | Google Ads |
+| `raw.meta_ads`                | Meta Ads   |
 
 
 To stop the environment and delete the volume:
@@ -49,7 +49,7 @@ make down
 
 Do not read the CSVs in `.data`. The contract is Postgres.
 
-## Deliverable B — dbt
+## Deliverable B - dbt
 
 Initialize your own dbt project in `dbt/` and point it at the lab Postgres. Model architecture, tests, and docs are part of the evaluation.
 
@@ -58,3 +58,4 @@ Initialize your own dbt project in `dbt/` and point it at the lab Postgres. Mode
 1. GCP architecture document (deliverable A)
 2. A dbt project that compiles and runs against the lab (deliverable B)
 3. Answers to the business questions using the simulated data
+

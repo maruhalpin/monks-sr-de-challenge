@@ -173,22 +173,30 @@ def load_historical(conn: psycopg.Connection, catalog: Catalog) -> None:
 def stream_live(conn: psycopg.Connection, catalog: Catalog) -> None:
     clock = ReplayClock(catalog)
     started = time.monotonic()
+    ga4_streamed = 0
+    ads_streamed = 0
+    ga4_total = len(catalog.live_ga4)
+    ads_total = len(catalog.live_ads)
     for tick in clock.ticks():
         ingested_at = datetime.now(timezone.utc)
         insert_ga4(conn, tick.ga4, ingested_at)
         insert_ads(conn, tick.ads, ingested_at)
         conn.commit()
+        ga4_streamed += sum(1 for event in tick.ga4 if not event.is_duplicate)
+        ads_streamed += len(tick.ads)
         target = started + (tick.wall_second + 1) * config.TICK_SECONDS
         remaining = target - time.monotonic()
         if remaining > 0:
             time.sleep(remaining)
         if tick.wall_second == 0 or (tick.wall_second + 1) % 30 == 0:
             LOGGER.info(
-                "live tick %s/%s: +%s GA4, +%s ads",
+                "live tick %s/%s: %s/%s GA4 streamed, %s/%s ads streamed",
                 tick.wall_second + 1,
                 config.TARGET_DURATION_SECONDS,
-                len(tick.ga4),
-                len(tick.ads),
+                ga4_streamed,
+                ga4_total,
+                ads_streamed,
+                ads_total,
             )
     LOGGER.info("live stream complete")
 
