@@ -1,0 +1,2 @@
+- Asumo que los registros de cada batch se consideran intervalos independientes de 6 horas. Los valores repetidos entre batches se consideran una característica del emulador.
+-> El enunciado indica explícitamente que los 4 registros diarios deben sumarse para obtener el total diario.
