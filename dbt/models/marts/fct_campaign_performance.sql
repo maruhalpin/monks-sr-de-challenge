@@ -68,7 +68,7 @@ campaign_performance as (
         ads.impressions,
         ads.spend,
 
-        count(distinct sessions.session_id) as sessions,
+        count(distinct (sessions.user_id, sessions.session_id)) as sessions,
 
         coalesce(sum(sessions.conversions), 0) as conversions,
 
