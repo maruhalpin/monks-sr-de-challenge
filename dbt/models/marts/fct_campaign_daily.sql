@@ -1,4 +1,29 @@
-with daily as (
+with campaign_performance as (
+
+    select *
+    from {{ ref('fct_campaign_performance') }}
+
+),
+
+affected_dates as (
+
+    select distinct date
+    from campaign_performance
+
+    {% if is_incremental() %}
+        where _ad_ingested_at > (
+            select coalesce(max(_ad_ingested_at), '1900-01-01'::timestamptz)
+            from {{ this }}
+        )
+        or _max_session_ingested_at > (
+            select coalesce(max(_max_session_ingested_at), '1900-01-01'::timestamptz)
+            from {{ this }}
+        )
+    {% endif %}
+
+),
+
+daily as (
 
     select
         platform,
@@ -17,9 +42,17 @@ with daily as (
         sum(sessions) as sessions,
         sum(conversions) as conversions,
         sum(purchases) as purchases,
-        sum(revenue) as revenue
+        sum(revenue) as revenue,
 
-    from {{ ref('fct_campaign_performance') }}
+        count(distinct batch_id) as windows_received,
+        count(distinct batch_id) = 4 as is_day_complete,
+
+        max(_ad_ingested_at) as _ad_ingested_at,
+        max(_max_session_ingested_at) as _max_session_ingested_at
+
+    from campaign_performance
+
+    inner join affected_dates using (date)
 
     group by
         platform,

@@ -1,7 +1,4 @@
 
-# Name your project! Project names should contain only lowercase characters
-# and underscores. A good package name should reflect your organization's
-# name or the intended use of these models
 name: 'xyz_dbt'
 version: '1.0.0'
 
@@ -32,10 +29,44 @@ models:
       +materialized: view
       +schema: staging
 
+      stg_ga4_events:
+        +materialized: incremental
+        +unique_key:
+          - user_id
+          - session_id
+          - event_timestamp
+          - event_name
+        +incremental_strategy: delete+insert
+
     intermediate:
       +materialized: table
       +schema: intermediate
 
+      int_ga4_sessions:
+        +materialized: incremental
+        +unique_key:
+          - user_id
+          - session_id
+        +incremental_strategy: delete+insert
+
     marts:
       +materialized: table
       +schema: marts
+
+      fct_campaign_performance:
+        +materialized: incremental
+        +unique_key:
+          - campaign_id
+          - date
+          - batch_window_start
+        +incremental_strategy: delete+insert
+
+      fct_campaign_daily:
+        +materialized: incremental
+        +unique_key:
+          - platform
+          - campaign_id
+          - country
+          - placement
+          - date
+        +incremental_strategy: delete+insert

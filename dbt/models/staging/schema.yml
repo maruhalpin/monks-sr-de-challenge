@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: stg_ga4_events
+    description: "Cleaned and deduplicated GA4 events."
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+
+      - name: session_id
+        tests:
+          - not_null
+
+      - name: event_timestamp
+        tests:
+          - not_null
+
+      - name: event_name
+        tests:
+          - not_null
+
+      - name: ingested_at
+        tests:
+          - not_null

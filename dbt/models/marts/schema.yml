@@ -1,0 +1,97 @@
+version: 2
+
+models:
+  - name: fct_campaign_daily
+    description: "Daily campaign performance combining media spend with attributed GA4 conversions and revenue."
+
+    columns:
+      - name: platform
+        tests:
+          - not_null
+
+      - name: campaign_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: spend
+        tests:
+          - not_null
+
+      - name: clicks
+        tests:
+          - not_null
+
+      - name: impressions
+        tests:
+          - not_null
+
+      - name: conversions
+        tests:
+          - not_null
+
+      - name: revenue
+        tests:
+          - not_null
+
+      - name: windows_received
+        description: "Distinct 6h ad batches received for this campaign-day (out of an expected 4)."
+        tests:
+          - not_null
+
+      - name: is_day_complete
+        tests:
+          - not_null
+
+      - name: _ad_ingested_at
+
+      - name: _max_session_ingested_at
+
+  - name: fct_campaign_performance
+    description: "6h-window grain: ad spend per campaign joined with GA4 sessions attributed to that window (campaign_id + country + session_start inside the window)."
+
+    columns:
+      - name: platform
+        tests:
+          - not_null
+
+      - name: campaign_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: batch_window_start
+        tests:
+          - not_null
+
+      - name: spend
+        tests:
+          - not_null
+
+      - name: clicks
+        tests:
+          - not_null
+
+      - name: impressions
+        tests:
+          - not_null
+
+      - name: conversions
+        tests:
+          - not_null
+
+      - name: revenue
+        tests:
+          - not_null
+
+      - name: _ad_ingested_at
+        tests:
+          - not_null
+
+      - name: _max_session_ingested_at

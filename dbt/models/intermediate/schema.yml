@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: int_ga4_sessions
+    description: "Session-level aggregation of GA4 events."
+
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+
+      - name: session_id
+        tests:
+          - not_null
+
+      - name: session_start
+        tests:
+          - not_null
+
+      - name: session_end
+        tests:
+          - not_null
+
+      - name: last_event_ingested_at
+        description: "Max ingested_at across the session's events. Lets downstream marts detect which sessions changed in a given incremental run."
+        tests:
+          - not_null
