@@ -70,3 +70,7 @@ models:
           - placement
           - date
         +incremental_strategy: delete+insert
+
+      reporting:
+        +materialized: view
+        +schema: reporting

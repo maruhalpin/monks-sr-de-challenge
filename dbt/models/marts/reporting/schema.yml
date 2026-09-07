@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: rpt_platform_performance
+    columns:
+      - name: platform
+        tests:
+          - not_null
+          - unique
+
+  - name: rpt_campaign_effectiveness
+    columns:
+      - name: campaign_id
+        tests:
+          - not_null
+          - unique
+
+  - name: rpt_channel_performance
+    columns:
+      - name: platform
+        tests:
+          - not_null

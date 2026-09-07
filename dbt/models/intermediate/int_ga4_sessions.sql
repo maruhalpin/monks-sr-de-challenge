@@ -6,12 +6,18 @@ with affected_sessions as (
     from {{ ref('stg_ga4_events') }}
 
     {% if is_incremental() %}
-        where ingested_at >= (
-            select coalesce(
-                max(ingested_at) - interval '5 minutes',
-                '1900-01-01'::timestamptz
+        where (
+            ingested_at >= (
+                select coalesce(
+                    max(last_event_ingested_at) - interval '5 minutes',
+                    '1900-01-01'::timestamptz
+                )
+                from {{ this }}
             )
-            from {{ ref('stg_ga4_events') }}
+            {% if var('backfill_start_date', none) %}
+            or event_timestamp >= '{{ var("backfill_start_date") }}'::date
+               and event_timestamp < '{{ var("backfill_end_date") }}'::date
+            {% endif %}
         )
     {% endif %}
 
