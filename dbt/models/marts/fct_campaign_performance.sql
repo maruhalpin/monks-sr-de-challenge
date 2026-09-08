@@ -19,8 +19,7 @@ affected_ad_windows as (
                 from {{ this }}
             )
             {% if var('backfill_start_date', none) %}
-            or date >= '{{ var("backfill_start_date") }}'::date
-               and date < '{{ var("backfill_end_date") }}'::date
+            or date >= '{{ var("backfill_start_date") }}'::date and date < '{{ var("backfill_end_date") }}'::date
             {% endif %}
         )
     {% endif %}
@@ -37,15 +36,12 @@ affected_sessions as (
                 from {{ this }}
             )
             {% if var('backfill_start_date', none) %}
-            or session_start >= '{{ var("backfill_start_date") }}'::date
-               and session_start < '{{ var("backfill_end_date") }}'::date
+            or session_start >= '{{ var("backfill_start_date") }}'::date and session_start < '{{ var("backfill_end_date") }}'::date
             {% endif %}
         )
     {% endif %}
 ),
 
--- a new session only invalidates the one 6h window it actually falls into,
--- not the campaign's whole history
 affected_windows_from_sessions as (
     select distinct
         ads.campaign_id,
@@ -74,6 +70,8 @@ campaign_performance as (
         ads.account_name,
         ads.country,
         ads.placement,
+        ads.channel,
+        ads.objective,
         ads.date,
         ads.batch_id,
         ads.batch_window_start,
@@ -82,10 +80,15 @@ campaign_performance as (
         ads.clicks,
         ads.impressions,
         ads.spend,
-        count(distinct (sessions.user_id, sessions.session_id)) as sessions,
+        count(*) filter (where sessions.session_id is not null) as sessions,
+        count(*) filter (where sessions.conversions > 0) as converting_sessions,
         coalesce(sum(sessions.conversions), 0) as conversions,
         coalesce(sum(sessions.purchase_count), 0) as purchases,
         coalesce(sum(sessions.revenue), 0) as revenue,
+        coalesce(sum(sessions.page_views), 0) as page_views,
+        coalesce(sum(sessions.add_to_cart), 0) as add_to_cart,
+        coalesce(sum(sessions.begin_checkout), 0) as begin_checkout,
+        coalesce(sum(sessions.add_payment_info), 0) as add_payment_info,
         max(sessions.last_event_ingested_at) as _max_session_ingested_at
     from ads
     inner join affected_keys
@@ -105,6 +108,8 @@ campaign_performance as (
         ads.account_name,
         ads.country,
         ads.placement,
+        ads.channel,
+        ads.objective,
         ads.date,
         ads.batch_id,
         ads.batch_window_start,
@@ -131,12 +136,8 @@ select
     end as ctr,
     case
         when sessions > 0
-        then conversions::numeric / sessions
+        then converting_sessions::numeric / sessions
     end as conversion_rate,
-    case
-        when spend > 0
-        then revenue / spend
-    end as roas,
     case
         when spend > 0
         then (revenue - spend) / spend

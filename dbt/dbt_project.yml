@@ -42,6 +42,14 @@ models:
       +materialized: table
       +schema: intermediate
 
+      int_ads_windows:
+        +materialized: incremental
+        +unique_key:
+          - campaign_id
+          - date
+          - batch_window_start
+        +incremental_strategy: delete+insert
+
       int_ga4_sessions:
         +materialized: incremental
         +unique_key:

@@ -2,21 +2,40 @@ version: 2
 
 models:
   - name: rpt_platform_performance
+    description: "Platform performance, one row per platform x month."
     columns:
       - name: platform
         tests:
           - not_null
-          - unique
+
+      - name: month
+        description: "First day of the calendar month (date_trunc('month', date))."
+        tests:
+          - not_null
 
   - name: rpt_campaign_effectiveness
+    description: "Campaign effectiveness, one row per campaign x month."
     columns:
       - name: campaign_id
         tests:
           - not_null
-          - unique
+
+      - name: month
+        description: "First day of the calendar month (date_trunc('month', date))."
+        tests:
+          - not_null
 
   - name: rpt_channel_performance
+    description: "Acquisition-channel performance: paid channels parsed from campaign_id, plus an 'organic' row (channel=direct, spend=0) for GA4 sessions with no ad-click attribution. One row per platform x channel x objective x month."
     columns:
       - name: platform
+        tests:
+          - not_null
+
+      - name: channel
+        tests:
+          - not_null
+
+      - name: month
         tests:
           - not_null

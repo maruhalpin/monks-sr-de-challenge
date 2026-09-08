@@ -25,3 +25,24 @@ models:
         description: "Max ingested_at across the session's events. Lets downstream marts detect which sessions changed in a given incremental run."
         tests:
           - not_null
+
+      - name: campaign_id
+        description: ""
+
+  - name: int_ads_windows
+    description: "Google Ads + Meta Ads unioned to a common shape, one row per campaign x 6h batch window. 1:1 with raw.google_ads and raw.meta_ads, only column renames (placement_id -> placement, ad_location -> placement)."
+
+    columns:
+      - name: campaign_id
+        tests:
+          - not_null
+
+      - name: channel
+        description: "Parsed from campaign_id. Independent of the platform's raw placement/ad_location field, which can be inconsistent."
+        tests:
+          - not_null
+
+      - name: objective
+        description: "Parsed from campaign_id (awareness/conversion/retargeting/traffic/brand/generic)."
+        tests:
+          - not_null

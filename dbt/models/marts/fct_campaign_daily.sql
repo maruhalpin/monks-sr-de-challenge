@@ -17,8 +17,7 @@ affected_dates as (
             from {{ this }}
         )
         {% if var('backfill_start_date', none) %}
-        or date >= '{{ var("backfill_start_date") }}'::date
-           and date < '{{ var("backfill_end_date") }}'::date
+        or date >= '{{ var("backfill_start_date") }}'::date and date < '{{ var("backfill_end_date") }}'::date
         {% endif %}
     {% endif %}
 ),
@@ -32,14 +31,21 @@ daily as (
         account_name,
         country,
         placement,
+        channel,
+        objective,
         date,
         sum(clicks) as clicks,
         sum(impressions) as impressions,
         sum(spend) as spend,
         sum(sessions) as sessions,
+        sum(converting_sessions) as converting_sessions,
         sum(conversions) as conversions,
         sum(purchases) as purchases,
         sum(revenue) as revenue,
+        sum(page_views) as page_views,
+        sum(add_to_cart) as add_to_cart,
+        sum(begin_checkout) as begin_checkout,
+        sum(add_payment_info) as add_payment_info,
         count(distinct batch_id) as windows_received,
         count(distinct batch_id) = 4 as is_day_complete,
         max(_ad_ingested_at) as _ad_ingested_at,
@@ -54,6 +60,8 @@ daily as (
         account_name,
         country,
         placement,
+        channel,
+        objective,
         date
 )
 
@@ -73,12 +81,8 @@ select
     end as ctr,
     case
         when sessions > 0
-        then conversions::numeric / sessions
+        then converting_sessions::numeric / sessions
     end as conversion_rate,
-    case
-        when spend > 0
-        then revenue / spend
-    end as roas,
     case
         when spend > 0
         then (revenue - spend) / spend
