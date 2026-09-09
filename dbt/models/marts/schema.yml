@@ -1,0 +1,139 @@
+version: 2
+
+models:
+  - name: fct_campaign_daily
+    description: "Daily campaign performance combining media spend with attributed GA4 conversions and revenue."
+
+    columns:
+      - name: platform
+        tests:
+          - not_null
+
+      - name: campaign_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: spend
+        tests:
+          - not_null
+
+      - name: clicks
+        tests:
+          - not_null
+
+      - name: impressions
+        tests:
+          - not_null
+
+      - name: conversions
+        description: "Count of GA4 events flagged is_conversion=true attributed to this campaign. Includes purchase and contact_us_form events."
+        tests:
+          - not_null
+
+      - name: converting_sessions
+        description: "Distinct sessions with at least one conversion event."
+        tests:
+          - not_null
+
+      - name: revenue
+        tests:
+          - not_null
+
+      - name: channel
+        description: "Parsed from campaign_id (see int_ads_windows)."
+        tests:
+          - not_null
+
+      - name: objective
+        description: "Parsed from campaign_id (see int_ads_windows)."
+        tests:
+          - not_null
+
+      - name: windows_received
+        description: "Distinct 6h ad batches received for this campaign-day (out of an expected 4)."
+        tests:
+          - not_null
+
+      - name: is_day_complete
+        description: "True when windows_received = 4."
+        tests:
+          - not_null
+
+      - name: _ad_ingested_at
+        description: "Internal watermark. Max ingested_at of the ad windows rolled into this day."
+
+      - name: _max_session_ingested_at
+        description: "Internal watermark. Max ingested_at across the GA4 sessions attributed to this day."
+
+  - name: fct_campaign_performance
+    description: "6h-window grain: ad spend per campaign joined with GA4 sessions attributed to that window (campaign_id + country + session_start inside the window)."
+
+    columns:
+      - name: platform
+        tests:
+          - not_null
+
+      - name: campaign_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: batch_window_start
+        tests:
+          - not_null
+
+      - name: spend
+        tests:
+          - not_null
+
+      - name: clicks
+        tests:
+          - not_null
+
+      - name: impressions
+        tests:
+          - not_null
+
+      - name: sessions
+        description: "Count of GA4 sessions attributed to this campaign x 6h window (campaign_id + country + session_start inside the window)."
+        tests:
+          - not_null
+
+      - name: conversions
+        description: "Count of conversion events (purchase + contact_us_form)."
+        tests:
+          - not_null
+
+      - name: converting_sessions
+        description: "Distinct sessions with at least one conversion event."
+        tests:
+          - not_null
+
+      - name: revenue
+        tests:
+          - not_null
+
+      - name: channel
+        description: "Parsed from campaign_id (see int_ads_windows)."
+        tests:
+          - not_null
+
+      - name: objective
+        description: "Parsed from campaign_id (see int_ads_windows)."
+        tests:
+          - not_null
+
+      - name: _ad_ingested_at
+        description: "Internal watermark: ingested_at of the ad window this row came from."
+        tests:
+          - not_null
+
+      - name: _max_session_ingested_at
+        description: "Internal watermark: max ingested_at across the sessions attributed to this window. Null when no session matched."

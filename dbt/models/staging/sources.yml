@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: google_analytics_events
+      - name: google_ads
+      - name: meta_ads

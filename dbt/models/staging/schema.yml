@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: stg_ga4_events
+    description: "Cleaned and deduplicated GA4 events."
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+
+      - name: session_id
+        tests:
+          - not_null
+
+      - name: event_timestamp
+        tests:
+          - not_null
+
+      - name: event_name
+        tests:
+          - not_null
+
+      - name: ingested_at
+        tests:
+          - not_null
+
+  - name: stg_google_ads
+    description: "Google Ads report rows, one per campaign x 6h batch window. 1:1 with raw.google_ads, only column renames (placement_id -> placement)."
+    columns:
+      - name: campaign_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: batch_window_start
+        tests:
+          - not_null
+
+      - name: batch_id
+        tests:
+          - not_null
+
+      - name: ingested_at
+        tests:
+          - not_null
+
+  - name: stg_meta_ads
+    description: "Meta Ads report rows, one per campaign x 6h batch window. 1:1 with raw.meta_ads, only column renames (ad_location -> placement)."
+    columns:
+      - name: campaign_id
+        tests:
+          - not_null
+
+      - name: date
+        tests:
+          - not_null
+
+      - name: batch_window_start
+        tests:
+          - not_null
+
+      - name: batch_id
+        tests:
+          - not_null
+
+      - name: ingested_at
+        tests:
+          - not_null

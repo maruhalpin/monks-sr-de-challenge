@@ -1,0 +1,84 @@
+
+name: 'xyz_dbt'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'xyz_dbt'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+models:
+  xyz_dbt:
+    staging:
+      +materialized: view
+      +schema: staging
+
+      stg_ga4_events:
+        +materialized: incremental
+        +unique_key:
+          - user_id
+          - session_id
+          - event_timestamp
+          - event_name
+        +incremental_strategy: delete+insert
+
+    intermediate:
+      +materialized: table
+      +schema: intermediate
+
+      int_ads_windows:
+        +materialized: incremental
+        +unique_key:
+          - campaign_id
+          - date
+          - batch_window_start
+        +incremental_strategy: delete+insert
+
+      int_ga4_sessions:
+        +materialized: incremental
+        +unique_key:
+          - user_id
+          - session_id
+        +incremental_strategy: delete+insert
+
+    marts:
+      +materialized: table
+      +schema: marts
+
+      fct_campaign_performance:
+        +materialized: incremental
+        +unique_key:
+          - campaign_id
+          - date
+          - batch_window_start
+        +incremental_strategy: delete+insert
+
+      fct_campaign_daily:
+        +materialized: incremental
+        +unique_key:
+          - platform
+          - campaign_id
+          - country
+          - placement
+          - date
+        +incremental_strategy: delete+insert
+
+      reporting:
+        +materialized: view
+        +schema: reporting
